@@ -1,102 +1,291 @@
-<!DOCTYPE html>
+
+
+<!doctype html>
+
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
+
+<meta charset="utf-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#10111c">
-<title>AI Avatar Studio</title>
+
+<title>Talking Avatar Studio</title>
+
 <style>
-:root{color-scheme:dark}
+
 *{box-sizing:border-box}
-body{margin:0;font-family:system-ui,-apple-system,Arial,sans-serif;background:#10111c;color:#fff}
-header{text-align:center;padding:28px 16px;background:#191a2b;border-bottom:1px solid #33324a}
-h1{margin:0;color:#c2b2ff;font-size:clamp(26px,6vw,36px)}
-header p,.muted{color:#c8c6d9}
-main{width:min(100% - 28px,520px);margin:24px auto}
-.panel{background:#1b1c2c;border:1px solid #39384f;border-radius:20px;padding:20px;margin-bottom:18px}
-h2,h3{margin-top:0}
-#stage{height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#11121c;border-radius:14px;border:1px dashed #4a4864}
-#avatar{display:none;max-width:100%;max-height:100%;object-fit:contain;transform-origin:center;animation:float 3s ease-in-out infinite}
-#placeholder{padding:24px;text-align:center;color:#aaa}
-@keyframes float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
-.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
-button,.file-label{display:inline-block;border:0;border-radius:12px;padding:13px 17px;background:#8065ed;color:#fff;font-size:15px;font-weight:700;cursor:pointer}
-button.secondary{background:#35354b}
-button:disabled{opacity:.45;cursor:not-allowed}
-input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
-#status{min-height:24px;text-align:center;color:#c2b2ff;font-size:14px;margin-bottom:0}
-.note{font-size:14px;line-height:1.55;color:#d0cede}
-footer{text-align:center;padding:10px 20px 30px;color:#8d8b9e;font-size:12px}
+
+body{margin:0;padding:18px;font-family:Arial,sans-serif;background:#101827;color:white}
+
+main{max-width:850px;margin:auto}
+
+h1{text-align:center}
+
+p{color:#c4cee0}
+
+.panel{background:#1b2940;padding:16px;border-radius:16px;margin:16px 0}
+
+.stage{position:relative;width:100%;max-width:360px;aspect-ratio:3/4;margin:auto;background:#080e19;border-radius:14px;overflow:hidden}
+
+#face{display:none;width:100%;height:100%;object-fit:cover}
+
+#placeholder{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px}
+
+#mouth{display:none;position:absolute;top:69%;left:50%;transform:translate(-50%,-50%);width:17%;height:2%;border-radius:50%;background:#45101c;border:2px solid #f2a6b5}
+
+#mouth.talking{animation:talk .2s infinite alternate}
+
+@keyframes talk{from{height:1%}to{height:7%}}
+
+label{display:block;margin:14px 0 6px;font-weight:bold}
+
+input,textarea,select{width:100%;padding:11px;border-radius:9px;border:1px solid #53637d;background:#101827;color:white}
+
+textarea{min-height:100px}
+
+button{padding:12px;border:0;border-radius:9px;font-weight:bold;background:#8ca8ff;color:#101827}
+
+.buttons{display:flex;gap:10px;margin-top:12px}
+
+.buttons button{flex:1}
+
+#status{color:#bcd0ff}
+
+small{color:#c4cee0}
+
 </style>
+
 </head>
+
 <body>
-<header>
-  <h1>✨ AI Avatar Studio</h1>
-  <p>Make a photo gently move — a free demo</p>
-</header>
+
 <main>
-  <section class="panel">
-    <h2>Your avatar</h2>
-    <div id="stage">
-      <div id="placeholder">📸<br><br>Choose a photo from your device to begin.</div>
-      <img id="avatar" alt="Your selected avatar photo">
-    </div>
-    <div class="actions">
-      <label class="file-label" for="photo">Choose a photo</label>
-      <input id="photo" type="file" accept="image/*">
-      <button id="start" disabled>Start animation</button>
-      <button id="stop" class="secondary" disabled>Stop</button>
-    </div>
-    <p id="status" role="status">Ready when you are.</p>
-  </section>
-  <section class="panel">
-    <h3>How to use</h3>
-    <p class="note">1. Tap <strong>Choose a photo</strong> and select an image.<br>
-    2. Tap <strong>Start animation</strong> to see a gentle movement.<br>
-    3. Tap <strong>Stop</strong> to pause it.</p>
-    <p class="note"><strong>Honest limitation:</strong> This starter version moves the whole photo. It does not yet make a face talk, sync lips to speech, or replace your camera during a video call. Your selected photo is previewed locally in your browser; this demo does not upload it to a server.</p>
-  </section>
+
+<h1>🎙️ Talking Avatar Studio</h1>
+
+<p>Upload a photo, type a message, and let your avatar speak.</p>
+
+<section class="panel">
+
+<div class="stage">
+
+<div id="placeholder">Your avatar will appear here.<br>Choose a photo below.</div>
+
+<img id="face" alt="Your avatar">
+
+<div id="mouth"></div>
+
+</div>
+
+<label for="photo">Choose your photo</label>
+
+<input id="photo" type="file" accept="image/*">
+
+<label for="mouthY">Mouth position up/down</label>
+
+<input id="mouthY" type="range" min="45" max="88" value="69">
+
+<label for="mouthX">Mouth position left/right</label>
+
+<input id="mouthX" type="range" min="25" max="75" value="50">
+
+<label for="mouthSize">Mouth width</label>
+
+<input id="mouthSize" type="range" min="8" max="30" value="17">
+
+</section>
+
+<section class="panel">
+
+<label for="words">What should your avatar say?</label>
+
+<textarea id="words">Hello! Welcome to my talking avatar website. It's nice to meet you!</textarea>
+
+<label for="voice">Choose a voice</label>
+
+<select id="voice"><option value="">Default voice</option></select>
+
+<div class="buttons">
+
+<button id="speak">Speak ▶</button>
+
+<button id="stop">Stop ■</button>
+
+</div>
+
+<p id="status">Ready. Choose a photo and tap Speak.</p>
+
+<small>This demo uses your browser's speech feature. Mouth movement is approximate, not exact lip-sync.</small>
+
+</section>
+
 </main>
-<footer>AI Avatar Studio · Free starter prototype</footer>
+
 <script>
-(() => {
-  const photo = document.getElementById('photo');
-  const avatar = document.getElementById('avatar');
-  const placeholder = document.getElementById('placeholder');
-  const start = document.getElementById('start');
-  const stop = document.getElementById('stop');
-  const status = document.getElementById('status');
-  let imageUrl = '';
 
-  photo.addEventListener('change', () => {
-    const file = photo.files && photo.files[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      status.textContent = 'Please choose an image file.';
-      return;
-    }
-    if (imageUrl) URL.revokeObjectURL(imageUrl);
-    imageUrl = URL.createObjectURL(file);
-    avatar.src = imageUrl;
-    avatar.style.display = 'block';
-    avatar.style.animation = 'float 3s ease-in-out infinite';
-    placeholder.style.display = 'none';
-    start.disabled = false;
-    stop.disabled = false;
-    status.textContent = 'Photo loaded. Tap Start animation.';
-  });
+const photo=document.getElementById('photo');
 
-  start.addEventListener('click', () => {
-    if (!avatar.src) return;
-    avatar.style.animation = 'float 3s ease-in-out infinite';
-    status.textContent = 'Your photo is moving!';
-  });
+const face=document.getElementById('face');
 
-  stop.addEventListener('click', () => {
-    avatar.style.animation = 'none';
-    status.textContent = 'Animation paused.';
-  });
-})();
+const placeholder=document.getElementById('placeholder');
+
+const mouth=document.getElementById('mouth');
+
+const words=document.getElementById('words');
+
+const voiceSelect=document.getElementById('voice');
+
+const status=document.getElementById('status');
+
+photo.addEventListener('change',()=>{
+
+ const file=photo.files[0];
+
+ if(!file)return;
+
+ face.src=URL.createObjectURL(file);
+
+ face.style.display='block';
+
+ mouth.style.display='block';
+
+ placeholder.style.display='none';
+
+ status.textContent='Photo loaded! Adjust the mouth position if needed.';
+
+});
+
+function positionMouth(){
+
+ mouth.style.top=document.getElementById('mouthY').value+'%';
+
+ mouth.style.left=document.getElementById('mouthX').value+'%';
+
+ mouth.style.width=document.getElementById('mouthSize').value+'%';
+
+}
+
+['mouthY','mouthX','mouthSize'].forEach(id=>{
+
+ document.getElementById(id).addEventListener('input',positionMouth);
+
+});
+
+positionMouth();
+
+function loadVoices(){
+
+ if(!('speechSynthesis' in window)){
+
+  status.textContent='Speech is not supported in this browser. Try Safari or Chrome.';
+
+  return;
+
+ }
+
+ const selected=voiceSelect.value;
+
+ const voices=speechSynthesis.getVoices();
+
+ voiceSelect.innerHTML='<option value="">Default voice</option>';
+
+ voices.forEach((voice,index)=>{
+
+  const option=document.createElement('option');
+
+  option.value=index;
+
+  option.textContent=voice.name+' ('+voice.lang+')';
+
+  voiceSelect.appendChild(option);
+
+ });
+
+ if(selected)voiceSelect.value=selected;
+
+}
+
+if('speechSynthesis' in window){
+
+ loadVoices();
+
+ speechSynthesis.onvoiceschanged=loadVoices;
+
+}
+
+document.getElementById('speak').addEventListener('click',()=>{
+
+ if(!('speechSynthesis' in window)){
+
+  status.textContent='Speech is not available. Try Safari or Chrome.';
+
+  return;
+
+ }
+
+ if(!words.value.trim()){
+
+  status.textContent='Type something to say first.';
+
+  return;
+
+ }
+
+ speechSynthesis.cancel();
+
+ const speech=new SpeechSynthesisUtterance(words.value.trim());
+
+ const voices=speechSynthesis.getVoices();
+
+ if(voiceSelect.value!=='' && voices[Number(voiceSelect.value)]){
+
+  speech.voice=voices[Number(voiceSelect.value)];
+
+ }
+
+ speech.rate=0.95;
+
+ speech.onstart=()=>{
+
+  if(face.style.display==='block')mouth.classList.add('talking');
+
+  status.textContent='Avatar is speaking...';
+
+ };
+
+ speech.onend=()=>{
+
+  mouth.classList.remove('talking');
+
+  status.textContent='Finished speaking!';
+
+ };
+
+ speech.onerror=()=>{
+
+  mouth.classList.remove('talking');
+
+  status.textContent='Could not speak. Try again.';
+
+ };
+
+ speechSynthesis.speak(speech);
+
+});
+
+document.getElementById('stop').addEventListener('click',()=>{
+
+ if('speechSynthesis' in window)speechSynthesis.cancel();
+
+ mouth.classList.remove('talking');
+
+ status.textContent='Speech stopped.';
+
+});
+
 </script>
+
 </body>
+
 </html>
