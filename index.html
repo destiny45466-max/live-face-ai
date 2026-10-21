@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#10111c">
+<title>AI Avatar Studio</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,Arial,sans-serif;background:#10111c;color:#fff}
+header{text-align:center;padding:28px 16px;background:#191a2b;border-bottom:1px solid #33324a}
+h1{margin:0;color:#c2b2ff;font-size:clamp(26px,6vw,36px)}
+header p,.muted{color:#c8c6d9}
+main{width:min(100% - 28px,520px);margin:24px auto}
+.panel{background:#1b1c2c;border:1px solid #39384f;border-radius:20px;padding:20px;margin-bottom:18px}
+h2,h3{margin-top:0}
+#stage{height:320px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#11121c;border-radius:14px;border:1px dashed #4a4864}
+#avatar{display:none;max-width:100%;max-height:100%;object-fit:contain;transform-origin:center;animation:float 3s ease-in-out infinite}
+#placeholder{padding:24px;text-align:center;color:#aaa}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-8px) rotate(1deg)}}
+.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:16px}
+button,.file-label{display:inline-block;border:0;border-radius:12px;padding:13px 17px;background:#8065ed;color:#fff;font-size:15px;font-weight:700;cursor:pointer}
+button.secondary{background:#35354b}
+button:disabled{opacity:.45;cursor:not-allowed}
+input[type=file]{position:absolute;width:1px;height:1px;opacity:0}
+#status{min-height:24px;text-align:center;color:#c2b2ff;font-size:14px;margin-bottom:0}
+.note{font-size:14px;line-height:1.55;color:#d0cede}
+footer{text-align:center;padding:10px 20px 30px;color:#8d8b9e;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <h1>✨ AI Avatar Studio</h1>
+  <p>Make a photo gently move — a free demo</p>
+</header>
+<main>
+  <section class="panel">
+    <h2>Your avatar</h2>
+    <div id="stage">
+      <div id="placeholder">📸<br><br>Choose a photo from your device to begin.</div>
+      <img id="avatar" alt="Your selected avatar photo">
+    </div>
+    <div class="actions">
+      <label class="file-label" for="photo">Choose a photo</label>
+      <input id="photo" type="file" accept="image/*">
+      <button id="start" disabled>Start animation</button>
+      <button id="stop" class="secondary" disabled>Stop</button>
+    </div>
+    <p id="status" role="status">Ready when you are.</p>
+  </section>
+  <section class="panel">
+    <h3>How to use</h3>
+    <p class="note">1. Tap <strong>Choose a photo</strong> and select an image.<br>
+    2. Tap <strong>Start animation</strong> to see a gentle movement.<br>
+    3. Tap <strong>Stop</strong> to pause it.</p>
+    <p class="note"><strong>Honest limitation:</strong> This starter version moves the whole photo. It does not yet make a face talk, sync lips to speech, or replace your camera during a video call. Your selected photo is previewed locally in your browser; this demo does not upload it to a server.</p>
+  </section>
+</main>
+<footer>AI Avatar Studio · Free starter prototype</footer>
+<script>
+(() => {
+  const photo = document.getElementById('photo');
+  const avatar = document.getElementById('avatar');
+  const placeholder = document.getElementById('placeholder');
+  const start = document.getElementById('start');
+  const stop = document.getElementById('stop');
+  const status = document.getElementById('status');
+  let imageUrl = '';
+
+  photo.addEventListener('change', () => {
+    const file = photo.files && photo.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      status.textContent = 'Please choose an image file.';
+      return;
+    }
+    if (imageUrl) URL.revokeObjectURL(imageUrl);
+    imageUrl = URL.createObjectURL(file);
+    avatar.src = imageUrl;
+    avatar.style.display = 'block';
+    avatar.style.animation = 'float 3s ease-in-out infinite';
+    placeholder.style.display = 'none';
+    start.disabled = false;
+    stop.disabled = false;
+    status.textContent = 'Photo loaded. Tap Start animation.';
+  });
+
+  start.addEventListener('click', () => {
+    if (!avatar.src) return;
+    avatar.style.animation = 'float 3s ease-in-out infinite';
+    status.textContent = 'Your photo is moving!';
+  });
+
+  stop.addEventListener('click', () => {
+    avatar.style.animation = 'none';
+    status.textContent = 'Animation paused.';
+  });
+})();
+</script>
+</body>
+</html>
